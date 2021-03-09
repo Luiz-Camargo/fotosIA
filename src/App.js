@@ -1,17 +1,18 @@
 import React, { useState } from 'react'
-import { ReactComponent as Robot } from '../src/images/artificial-intelligence.svg'
 import './App.css'
-import GifCarregando from '../src/images/Spinner-1s-200px.gif'
+import { ReactComponent as Robot } from '../src/images/artificial-intelligence.svg'
+import Carregando from '../src/images/Spinner-1s-200px.gif'
 
 function App() {
   //JSX - Extensão de Sintaxe JavaScript
   //Hooks - useState (facilitador para getter/setter)
   const [pessoas, setPessoas] = useState([]) //[] inicializa com uma matriz
   const [carregando, setCarregando] = useState(false)
-  const [etnia, setEtnia] = useState("")
-  const [idade, setIdade] = useState("")
+  const [etnia, setEtnia] = useState('')
+  const [idade, setIdade] = useState('')
 
-  function ListaPessoas() {
+  function ListaPessoas(props) {
+    const pessoas = props.pessoas
     const listagemPessoas = pessoas.map((pessoa) =>
       <img key={pessoa.id} src={pessoa.urls[4][512]}
         title="Gerada por IA" alt="Pessoa gerada por IA" />
@@ -21,11 +22,11 @@ function App() {
     )
   }
 
-  async function obterFoto() {
+  async function obtemFoto() {
     setCarregando(true)
     let chaveAPI = process.env.REACT_APP_APIKEY
 
-    const filtraEtnia = etnia.length > 0 ? `&ethnicity=${etnia}` : ''
+    const filtraEtnia = etnia.length > 0 ? `&ethnicity=${etnia}`: ''
     const filtraIdade = idade.length > 0 ? `&age=${idade}` : ''
 
     let url = `https://api.generated.photos/api/v1/faces?api_key=${chaveAPI}${filtraEtnia}${filtraIdade}&order_by=random`
@@ -33,7 +34,7 @@ function App() {
       .then(response => response.json())
       .then(data => {
         setPessoas(data.faces)
-        console.log('Dados carregados com sucesso!')
+        //console.log(data.faces)
       })
       .catch(function (error) {
         console.error('Houve um erro na requisição ' + error.message)
@@ -46,9 +47,9 @@ function App() {
       <h1>Gerador de fotos via IA</h1>
       <Robot />
       {carregando &&
-        <img src={GifCarregando} title="Aguarde..." alt="Aguarde, dados sendo carregados" />
+        <img src={Carregando} title="Aguarde..." alt="Aguarde, dados sendo carregados" width="50" />
       }
-      <div className='fotos'>
+      <div className='linha'>
         <ListaPessoas pessoas={pessoas} />
       </div>
 
@@ -74,8 +75,8 @@ function App() {
       </div>
 
       <div className='linha'>
-        <button type='button' onClick={obterFoto}>
-          Obter Imagem
+        <button type='button' onClick={obtemFoto}>
+          Obter Imagens
         </button>
         {pessoas.length > 0 &&
           <button type='button' onClick={() => setPessoas([])}>
